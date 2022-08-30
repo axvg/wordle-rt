@@ -1,5 +1,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import "./App.css";
+import Keyboard from "./components/Keyboard";
 import WordRow, { LETTER_LENGTH } from "./components/WordRow";
 import { gameStateEnum, useWordContext } from "./context/wordContext";
 import useGuess from "./hooks/useGuess";
@@ -74,6 +75,8 @@ function App() {
       <header className="border-b border-white pb-2 my-2">
         <h1 className="text-4xl text-center">Wordle</h1>
       </header>
+
+      <Keyboard />
       <main className="grid grid-rows-6 gap-4">
         {rows.map(({ guess, result }, i) => (
           <WordRow
