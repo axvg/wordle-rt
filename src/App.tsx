@@ -1,13 +1,14 @@
 import { ChangeEvent, useState } from "react";
 import "./App.css";
 import WordRow, { LETTER_LENGTH } from "./components/WordRow";
-import { useWordContext } from "./context/wordContext";
+import { gameStateEnum, useWordContext } from "./context/wordContext";
+import useGuess from "./hooks/useGuess";
 
-const GUESS_LENGTH = 6;
+export const GUESS_LENGTH = 6;
 
 function App() {
   const context = useWordContext();
-  const [guess, setGuess] = useState("");
+  const [guess, setGuess] = useGuess();
 
   // const numberOfGuessesRemaining = GUESS_LENGTH - context.guesses.length;
 
@@ -20,21 +21,22 @@ function App() {
     rows.push({ guess });
   }
 
+  // const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+  //   let newGuess = e.target.value;
+
+  //   if (newGuess.length === LETTER_LENGTH) {
+  //     context.addGuess(newGuess);
+  //     setGuess("");
+  //     return;
+  //   }
+  //   setGuess(newGuess);
+  // };
+
   const numberOfGuessesRemaining = GUESS_LENGTH - rows.length;
   rows = rows.concat(Array(numberOfGuessesRemaining).fill(""));
+  // console.log("gamestate", context.gameState);
 
-  const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    let newGuess = e.target.value;
-
-    if (newGuess.length === LETTER_LENGTH) {
-      context.addGuess(newGuess);
-      setGuess("");
-      return;
-    }
-    setGuess(newGuess);
-  };
-
-  const isGameOver = context.guesses.length === GUESS_LENGTH;
+  const isGameOver = context.gameState !== gameStateEnum.playing;
 
   return (
     <div className="mx-auto w-96 relative">
@@ -64,13 +66,13 @@ function App() {
           </button>
         </div>
       )}
-      <input
+      {/* <input
         type="text"
         className="w-1/2 p-2 m-4 border-2 border-white"
         value={guess}
         onChange={changeHandler}
         disabled={isGameOver}
-      />
+      /> */}
     </div>
   );
 }
