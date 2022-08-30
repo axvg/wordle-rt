@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Keyboard from "./components/Keyboard";
 import WordRow, { LETTER_LENGTH } from "./components/WordRow";
@@ -11,7 +11,7 @@ export const GUESS_LENGTH = 6;
 
 function App() {
   const context = useWordContext();
-  const [guess, setGuess] = useGuess();
+  const [guess, setGuess, addGuessLetter] = useGuess();
   const [showInvalidGuess, setInvalidGuess] = useState(false);
 
   useEffect(() => {
@@ -28,7 +28,6 @@ function App() {
 
   useEffect(() => {
     if (guess.length === 0 && previousGuess?.length === 5) {
-      // addGuess(previousGuess);
       if (isValidWord(previousGuess)) {
         setInvalidGuess(false);
         addGuess(previousGuess);
@@ -39,14 +38,9 @@ function App() {
     }
   }, [guess]);
 
-  // const numberOfGuessesRemaining = GUESS_LENGTH - context.guesses.length;
-
   const isGameOver = context.gameState !== gameStateEnum.playing;
 
-  let rows = [
-    ...context.guesses,
-    // ...Array(numberOfGuessesRemaining).fill(""),
-  ];
+  let rows = [...context.guesses];
 
   let currentRow = 0;
 
@@ -54,21 +48,9 @@ function App() {
     currentRow = rows.push({ guess }) - 1;
   }
 
-  // const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-  //   let newGuess = e.target.value;
-
-  //   if (newGuess.length === LETTER_LENGTH) {
-  //     context.addGuess(newGuess);
-  //     setGuess("");
-  //     return;
-  //   }
-  //   setGuess(newGuess);
-  // };
-
   const numberOfGuessesRemaining = GUESS_LENGTH - rows.length;
 
   rows = rows.concat(Array(numberOfGuessesRemaining).fill(""));
-  // console.log("gamestate", context.gameState);
 
   return (
     <div className="mx-auto w-96 relative">
@@ -76,7 +58,11 @@ function App() {
         <h1 className="text-4xl text-center">Wordle</h1>
       </header>
 
-      <Keyboard />
+      <Keyboard
+        onClick={(letter) => {
+          addGuessLetter(letter);
+        }}
+      />
       <main className="grid grid-rows-6 gap-4">
         {rows.map(({ guess, result }, i) => (
           <WordRow
@@ -108,13 +94,6 @@ function App() {
           </button>
         </div>
       )}
-      {/* <input
-        type="text"
-        className="w-1/2 p-2 m-4 border-2 border-white"
-        value={guess}
-        onChange={changeHandler}
-        disabled={isGameOver}
-      /> */}
     </div>
   );
 }

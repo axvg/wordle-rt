@@ -19,13 +19,10 @@ export default function WordRow({
   result = [],
   className = "",
 }: WordRowProps) {
-  // const { answer } = useWordContext();
-
   const lettersRemaining = LETTER_LENGTH - lettersProp.length;
   const letters = lettersProp
     .split("")
     .concat(Array(lettersRemaining).fill(""));
-  // const guessStates = computeGuess(lettersProp, answer);
 
   return (
     <div className={`grid grid-cols-5 gap-4 ${className}`}>

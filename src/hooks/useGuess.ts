@@ -2,13 +2,13 @@ import React, { Dispatch, useEffect, useState } from "react";
 
 export default function useGuess(): [
   string,
-  Dispatch<React.SetStateAction<string>>
+  Dispatch<React.SetStateAction<string>>,
+  (letter: string) => void
 ] {
   const [guess, setGuess] = useState("");
 
-  const onKeyDown = (e: KeyboardEvent) => {
+  const addGuessLetter = (letter: string) => {
     setGuess((currGuess) => {
-      let letter = e.key;
       const newGuess =
         letter.length === 1 && currGuess.length !== 5
           ? currGuess + letter
@@ -21,7 +21,6 @@ export default function useGuess(): [
           if (newGuess.length === 5) {
             return "";
           }
-          console.log("newGuess", newGuess);
       }
 
       if (currGuess.length === 5) {
@@ -31,6 +30,11 @@ export default function useGuess(): [
     });
   };
 
+  const onKeyDown = (e: KeyboardEvent) => {
+    let letter = e.key;
+    addGuessLetter(letter);
+  };
+
   useEffect(() => {
     document.addEventListener("keydown", onKeyDown);
     return () => {
@@ -38,5 +42,5 @@ export default function useGuess(): [
     };
   }, []);
 
-  return [guess, setGuess];
+  return [guess, setGuess, addGuessLetter];
 }
