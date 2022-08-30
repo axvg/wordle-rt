@@ -25,6 +25,7 @@ interface ContextResult {
   addGuess: (guess: string) => void;
   newGame: () => void;
   gameState: gameStateEnum;
+  keyboardLetterState: { [letter: string]: LetterState };
 }
 
 const WordContext = createContext<ContextResult>({
@@ -33,6 +34,7 @@ const WordContext = createContext<ContextResult>({
   addGuess: (guess: string) => console.log("lol"),
   newGame: () => console.log("new game lol"),
   gameState: gameStateEnum.playing,
+  keyboardLetterState: {},
 });
 
 interface WordContextProviderProps {
@@ -45,6 +47,9 @@ export function WordContextProvider({ children }: WordContextProviderProps) {
   const [gameState, setGameState] = useState<gameStateEnum>(
     gameStateEnum.playing
   );
+  const [keyboardLetterState, setKeyboardLetterState] = useState<{
+    [letter: string]: LetterState;
+  }>({});
 
   const addGuess = (guess: string) => {
     const result = computeGuess(guess, answer);
@@ -63,17 +68,43 @@ export function WordContextProvider({ children }: WordContextProviderProps) {
     } else {
       setGameState(gameStateEnum.playing);
     }
+
+    result.forEach((r, i) => {
+      const resultGuessLetter = guess[i];
+
+      const currentLetterState = keyboardLetterState[resultGuessLetter];
+
+      switch (currentLetterState) {
+        case LetterState.Match:
+          break;
+        case LetterState.Present:
+          if (r === LetterState.Miss) {
+            break;
+          }
+        default:
+          keyboardLetterState[resultGuessLetter] = r;
+          break;
+      }
+    });
   };
 
   const newGame = () => {
     setAnswer(getRandomWord);
     setGuesses([]);
     setGameState(gameStateEnum.playing);
+    setKeyboardLetterState({});
   };
 
   return (
     <WordContext.Provider
-      value={{ answer, guesses, addGuess, newGame, gameState }}
+      value={{
+        answer,
+        guesses,
+        addGuess,
+        newGame,
+        gameState,
+        keyboardLetterState,
+      }}
     >
       {children}
     </WordContext.Provider>
