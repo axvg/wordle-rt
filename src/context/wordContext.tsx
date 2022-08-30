@@ -6,11 +6,16 @@ import {
   useState,
 } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { getRandomWord } from "../wordUtils";
+import { computeGuess, getRandomWord, LetterState } from "../wordUtils";
+
+interface GuessRow {
+  guess: string;
+  result?: LetterState[];
+}
 
 interface ContextResult {
   answer: string;
-  guesses: string[];
+  guesses: GuessRow[];
   addGuess: (guess: string) => void;
   newGame: () => void;
 }
@@ -28,13 +33,9 @@ interface WordContextProviderProps {
 export function WordContextProvider({ children }: WordContextProviderProps) {
   const word = getRandomWord();
   const [answer, setAnswer] = useLocalStorage("answer", word);
-  const [guesses, setGuesses] = useState<string[]>([
-    "hello",
-    "solar",
-    "snack",
-    "blood",
-  ]);
-  const addGuess = (guess: string) => setGuesses([...guesses, guess]);
+  const [guesses, setGuesses] = useState<GuessRow[]>([]);
+  const addGuess = (guess: string) =>
+    setGuesses([...guesses, { guess, result: computeGuess(guess, answer) }]);
 
   const newGame = () => {
     setAnswer(getRandomWord);

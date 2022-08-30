@@ -17,7 +17,7 @@ function App() {
   ];
 
   if (rows.length < GUESS_LENGTH) {
-    rows.push(guess);
+    rows.push({ guess });
   }
 
   const numberOfGuessesRemaining = GUESS_LENGTH - rows.length;
@@ -42,8 +42,8 @@ function App() {
         <h1 className="text-4xl text-center">Wordle</h1>
       </header>
       <main className="grid grid-rows-6 gap-4">
-        {rows.map((word, i) => (
-          <WordRow key={i} letters={word} />
+        {rows.map(({ guess, result }, i) => (
+          <WordRow key={i} letters={guess} result={result} />
         ))}
       </main>
 

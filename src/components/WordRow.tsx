@@ -3,6 +3,7 @@ import { computeGuess, LetterState } from "../wordUtils";
 
 interface WordRowProps {
   letters: string;
+  result?: LetterState[];
 }
 
 interface CharacterBoxProps {
@@ -12,19 +13,22 @@ interface CharacterBoxProps {
 
 export const LETTER_LENGTH = 5;
 
-export default function WordRow({ letters: lettersProp = "" }: WordRowProps) {
-  const { answer } = useWordContext();
+export default function WordRow({
+  letters: lettersProp = "",
+  result = [],
+}: WordRowProps) {
+  // const { answer } = useWordContext();
 
   const lettersRemaining = LETTER_LENGTH - lettersProp.length;
   const letters = lettersProp
     .split("")
     .concat(Array(lettersRemaining).fill(""));
-  const guessStates = computeGuess(lettersProp, answer);
+  // const guessStates = computeGuess(lettersProp, answer);
 
   return (
     <div className="grid grid-cols-5 gap-4">
       {letters.map((char, i) => (
-        <CharacterBox key={i} value={char} state={guessStates[i]} />
+        <CharacterBox key={i} value={char} state={result[i]} />
       ))}
     </div>
   );
@@ -36,7 +40,7 @@ function CharacterBox({ value, state }: CharacterBoxProps) {
 
   return (
     <div
-      className={`inline-block border-2 border-black p-4 uppercase font-bold text-2xl text-center ${stateStyles}`}
+      className={`inline-block border-2 border-black p-4 before:inline-block before:content-['_'] uppercase font-bold text-2xl text-center ${stateStyles}`}
     >
       {value}
     </div>
