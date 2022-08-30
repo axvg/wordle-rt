@@ -12,12 +12,14 @@ interface ContextResult {
   answer: string;
   guesses: string[];
   addGuess: (guess: string) => void;
+  newGame: () => void;
 }
 
 const WordContext = createContext<ContextResult>({
   answer: "",
   guesses: [],
   addGuess: (guess: string) => console.log("lol"),
+  newGame: () => console.log("new game lol"),
 });
 
 interface WordContextProviderProps {
@@ -34,8 +36,13 @@ export function WordContextProvider({ children }: WordContextProviderProps) {
   ]);
   const addGuess = (guess: string) => setGuesses([...guesses, guess]);
 
+  const newGame = () => {
+    setAnswer(getRandomWord);
+    setGuesses([]);
+  };
+
   return (
-    <WordContext.Provider value={{ answer, guesses, addGuess }}>
+    <WordContext.Provider value={{ answer, guesses, addGuess, newGame }}>
       {children}
     </WordContext.Provider>
   );

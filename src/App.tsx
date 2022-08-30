@@ -34,8 +34,10 @@ function App() {
     setGuess(newGuess);
   };
 
+  const isGameOver = context.guesses.length === GUESS_LENGTH;
+
   return (
-    <div className="mx-auto w-96">
+    <div className="mx-auto w-96 relative">
       <header className="border-b border-white pb-2 my-2">
         <h1 className="text-4xl text-center">Wordle</h1>
       </header>
@@ -45,11 +47,29 @@ function App() {
         ))}
       </main>
 
+      {isGameOver && (
+        <div
+          role="modal"
+          className="absolute bg-white rounded border border-black left-0 right-0 top-1/4 p-6 w-3/4 mx-auto text-center text-black"
+        >
+          Game Over!
+          <button
+            className="block border rounded border-black bg-green-500 p-2 mt-4 mx-auto shadow"
+            onClick={() => {
+              context.newGame();
+              setGuess("");
+            }}
+          >
+            New Game
+          </button>
+        </div>
+      )}
       <input
         type="text"
         className="w-1/2 p-2 m-4 border-2 border-white"
         value={guess}
         onChange={changeHandler}
+        disabled={isGameOver}
       />
     </div>
   );
