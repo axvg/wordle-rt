@@ -52,6 +52,9 @@ export function WordContextProvider({ children }: WordContextProviderProps) {
     const didWin = result.every((i) => i === LetterState.Match);
 
     setGuesses([...guesses, { guess, result }]);
+    // setGuesses(guesses.concat({ guess, result }));
+
+    console.log("gs", guesses);
 
     if (didWin === true) {
       setGameState(gameStateEnum.won);

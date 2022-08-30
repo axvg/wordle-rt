@@ -4,6 +4,7 @@ import { computeGuess, LetterState } from "../wordUtils";
 interface WordRowProps {
   letters: string;
   result?: LetterState[];
+  className?: string;
 }
 
 interface CharacterBoxProps {
@@ -16,6 +17,7 @@ export const LETTER_LENGTH = 5;
 export default function WordRow({
   letters: lettersProp = "",
   result = [],
+  className = "",
 }: WordRowProps) {
   // const { answer } = useWordContext();
 
@@ -26,7 +28,7 @@ export default function WordRow({
   // const guessStates = computeGuess(lettersProp, answer);
 
   return (
-    <div className="grid grid-cols-5 gap-4">
+    <div className={`grid grid-cols-5 gap-4 ${className}`}>
       {letters.map((char, i) => (
         <CharacterBox key={i} value={char} state={result[i]} />
       ))}

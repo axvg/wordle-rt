@@ -1,24 +1,56 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import "./App.css";
 import WordRow, { LETTER_LENGTH } from "./components/WordRow";
 import { gameStateEnum, useWordContext } from "./context/wordContext";
 import useGuess from "./hooks/useGuess";
+import usePrevious from "./hooks/usePrevious";
+import { isValidWord } from "./wordUtils";
 
 export const GUESS_LENGTH = 6;
 
 function App() {
   const context = useWordContext();
   const [guess, setGuess] = useGuess();
+  const [showInvalidGuess, setInvalidGuess] = useState(false);
+
+  useEffect(() => {
+    let id: any;
+    if (showInvalidGuess) {
+      id = setTimeout(() => setInvalidGuess(false), 2000);
+    }
+
+    return () => clearTimeout(id);
+  }, [showInvalidGuess]);
+
+  const { addGuess } = useWordContext();
+  const previousGuess = usePrevious(guess);
+
+  useEffect(() => {
+    if (guess.length === 0 && previousGuess?.length === 5) {
+      // addGuess(previousGuess);
+      if (isValidWord(previousGuess)) {
+        setInvalidGuess(false);
+        addGuess(previousGuess);
+      } else {
+        setInvalidGuess(true);
+        setGuess(previousGuess);
+      }
+    }
+  }, [guess]);
 
   // const numberOfGuessesRemaining = GUESS_LENGTH - context.guesses.length;
+
+  const isGameOver = context.gameState !== gameStateEnum.playing;
 
   let rows = [
     ...context.guesses,
     // ...Array(numberOfGuessesRemaining).fill(""),
   ];
 
+  let currentRow = 0;
+
   if (rows.length < GUESS_LENGTH) {
-    rows.push({ guess });
+    currentRow = rows.push({ guess }) - 1;
   }
 
   // const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -33,10 +65,9 @@ function App() {
   // };
 
   const numberOfGuessesRemaining = GUESS_LENGTH - rows.length;
+
   rows = rows.concat(Array(numberOfGuessesRemaining).fill(""));
   // console.log("gamestate", context.gameState);
-
-  const isGameOver = context.gameState !== gameStateEnum.playing;
 
   return (
     <div className="mx-auto w-96 relative">
@@ -45,7 +76,14 @@ function App() {
       </header>
       <main className="grid grid-rows-6 gap-4">
         {rows.map(({ guess, result }, i) => (
-          <WordRow key={i} letters={guess} result={result} />
+          <WordRow
+            key={i}
+            letters={guess}
+            result={result}
+            className={
+              showInvalidGuess && currentRow === i ? "animate-bounce" : ""
+            }
+          />
         ))}
       </main>
 
@@ -55,6 +93,7 @@ function App() {
           className="absolute bg-white rounded border border-black left-0 right-0 top-1/4 p-6 w-3/4 mx-auto text-center text-black"
         >
           Game Over!
+          <WordRow letters={context.answer} />
           <button
             className="block border rounded border-black bg-green-500 p-2 mt-4 mx-auto shadow"
             onClick={() => {
