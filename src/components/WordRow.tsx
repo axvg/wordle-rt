@@ -1,5 +1,4 @@
-import { useWordContext } from "../context/wordContext";
-import { computeGuess, LetterState } from "../wordUtils";
+import { LetterState, LETTER_LENGTH } from "../wordUtils";
 
 interface WordRowProps {
   letters: string;
@@ -11,8 +10,6 @@ interface CharacterBoxProps {
   value: string;
   state?: LetterState;
 }
-
-export const LETTER_LENGTH = 5;
 
 export default function WordRow({
   letters: lettersProp = "",

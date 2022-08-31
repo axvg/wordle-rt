@@ -1,6 +1,9 @@
 import wordBank from "./word-bank.json";
 
-const word = getRandomWord();
+// const wordBank = JSON.parse(localStorage.getItem("wordBank")!) ? ;
+// const wordBank = localStorage.getItem("wordBank")
+//   ? JSON.parse(localStorage.getItem("wordBank")!)
+//   : ["boost"];
 
 export function getRandomWord() {
   const randomIndex = Math.floor(Math.random() * wordBank.length);
@@ -24,14 +27,11 @@ export function computeGuess(
   }
 
   const answer = answerString.split("");
-
   const guessAsArray = guess.split("");
-
   const answerLetterCount: Record<string, number> = {};
 
   guessAsArray.forEach((letter, index) => {
     const currentAnswerLetter = answer[index];
-
     answerLetterCount[currentAnswerLetter] = answerLetterCount[
       currentAnswerLetter
     ]
@@ -53,21 +53,17 @@ export function computeGuess(
     }
 
     const guessLetter = guessAsArray[resultIndex];
-
     answer.forEach((currentAnswerLetter, answerIndex) => {
       if (currentAnswerLetter !== guessLetter) {
         return;
       }
-
       if (result[answerIndex] === LetterState.Match) {
         result[resultIndex] = LetterState.Miss;
       }
-
       if (answerLetterCount[guessLetter] <= 0) {
         result[resultIndex] = LetterState.Miss;
       }
     });
-
     answerLetterCount[guessLetter]--;
   });
 
@@ -77,3 +73,5 @@ export function computeGuess(
 export function isValidWord(word: string): boolean {
   return wordBank.includes(word);
 }
+
+export const LETTER_LENGTH = 5;

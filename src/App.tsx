@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import Keyboard from "./components/Keyboard";
-import WordRow, { LETTER_LENGTH } from "./components/WordRow";
+import WordRow from "./components/WordRow";
 import { gameStateEnum, useWordContext } from "./context/wordContext";
+import { isValidWord, LETTER_LENGTH } from "./wordUtils";
 import useGuess from "./hooks/useGuess";
 import usePrevious from "./hooks/usePrevious";
-import { isValidWord } from "./wordUtils";
 
 export const GUESS_LENGTH = 6;
 
@@ -27,7 +27,7 @@ function App() {
   const previousGuess = usePrevious(guess);
 
   useEffect(() => {
-    if (guess.length === 0 && previousGuess?.length === 5) {
+    if (guess.length === 0 && previousGuess?.length === LETTER_LENGTH) {
       if (isValidWord(previousGuess)) {
         setInvalidGuess(false);
         addGuess(previousGuess);
@@ -53,7 +53,7 @@ function App() {
   rows = rows.concat(Array(numberOfGuessesRemaining).fill(""));
 
   return (
-    <div className="mx-auto w-96 relative">
+    <div className="mx-auto w-96 relative h-screen">
       <header className="border-b border-white pb-2 my-2">
         <h1 className="text-4xl text-center">Wordle</h1>
       </header>
